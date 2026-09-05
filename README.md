@@ -417,10 +417,4 @@ Large raw datasets and generated matrix files are excluded from the GitHub repos
 
 ---
 
-# Project Status
 
-**Completed — Task 2**
-
-The project includes the complete notebook-based machine learning workflow, two feature-engineering experiments, model comparison, threshold optimization, leakage prevention, saved artifacts, and final evaluation.
-
-The next stage of the MLOps track will convert the notebook workflow into production-oriented Python scripts and deployment components.
