@@ -2,7 +2,7 @@
 .ipynb_checkpoints/
 
 # Raw Olist datasets
-olist_*.csv
+# Raw Olist datasets are stored in .\olist db\
 product_category_name_translation.csv
 
 # Large generated artifacts
@@ -17,3 +17,8 @@ __pycache__/
 # OS
 Thumbs.db
 .DS_Store
+
+# Duplicate geolocation copy used locally outside the dataset folder
+/olist_geolocation_dataset.csv
+
+!olist db/product_category_name_translation.csv
