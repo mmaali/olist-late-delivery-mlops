@@ -1,0 +1,8 @@
+
+EDA Findings:
+- The training data contains numerical, categorical, date, and identifier features.
+- Several numerical features are highly skewed and contain potential outliers.
+- Missing values are present in several payment, review, product, and date features.
+- Delivery time and geographic information may provide useful signals for delivery prediction.
+- Categorical and temporal patterns were examined against the delivery label.
+- These findings will guide feature selection and preprocessing in Notebook 5.

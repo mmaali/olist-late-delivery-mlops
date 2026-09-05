@@ -1,0 +1,14 @@
+item_count
+total_price
+total_freight
+payment_count
+total_payment
+payment_installments
+unique_products
+average_product_weight
+average_product_photos
+customer_zip_code_prefix
+seller_zip_code_prefix
+same_state
+customer_state
+seller_state

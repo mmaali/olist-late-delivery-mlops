@@ -1,0 +1,19 @@
+# Jupyter
+.ipynb_checkpoints/
+
+# Raw Olist datasets
+olist_*.csv
+product_category_name_translation.csv
+
+# Large generated artifacts
+artifacts/*.csv
+artifacts/*.npz
+artifacts/*.npy
+
+# Python
+__pycache__/
+*.py[cod]
+
+# OS
+Thumbs.db
+.DS_Store
