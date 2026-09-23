@@ -1,0 +1,5 @@
+outs:
+- md5: 572341278e66b8220365b53518736ae2
+  size: 1691
+  hash: md5
+  path: final_logistic_model_experiment2.joblib
