@@ -417,4 +417,74 @@ Large raw datasets and generated matrix files are excluded from the GitHub repos
 
 ---
 
+# Task 3 — Inference and MLOps
 
+The production service uses the Experiment 2 model registered in MLflow. The API loads the `Production` model alias at startup, validates incoming order data with basic checks and Great Expectations, builds the prediction-time features, and returns a delivery prediction.
+
+## Run with Docker Compose
+
+From the project root, start the services with:
+
+```powershell
+docker compose up -d --build
+```
+
+Compose starts MLflow, registers the model and assigns the `Production` alias, then starts the API. Check service status and logs with:
+
+```powershell
+docker compose ps -a
+docker compose logs --tail=100 mlflow
+docker compose logs --tail=100 mlflow-init api
+```
+
+The MLflow UI is available at `http://localhost:5000` and the API at `http://localhost:8000`. MLflow stores its SQLite database and artifacts in named Docker volumes; API prediction logs are stored in the `api_logs` volume.
+
+## API endpoints
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| `GET` | `/health` | Check API health |
+| `GET` | `/metrics` | Show request count, average latency, error rate, and prediction distribution since startup |
+| `GET` | `/model-info` | Show model name, version, threshold, and MLflow URI |
+| `POST` | `/predict` | Predict for one order |
+| `POST` | `/predict-batch` | Predict for a list of orders |
+
+Use `http://localhost:8000/docs` to view the request schemas and try the endpoints. Prediction requests require the order and payment fields, customer and seller locations, and purchase, approval, and estimated-delivery timestamps.
+
+Run inference from a JSON file on the host by sending it to the CLI inside the API container:
+
+```powershell
+Get-Content .\order.json -Raw | docker compose exec -T api python -m src.cli -
+```
+
+The API logs each prediction input, output, latency, and model version. Logs are written to the `api_logs` volume and also appear in the container output. View live logs with:
+
+```powershell
+docker compose logs -f api
+```
+
+Monitoring is process-level: `/metrics` counters reset when the API container restarts. Review sustained error rates above 5% or average latency above one second. The validation baseline late-prediction rate is 27.45% at threshold `0.35`; `/metrics` raises `prediction_drift.drift_alert` after 100 predictions if the observed late-prediction rate differs by more than 10 percentage points. Prediction logs retain the inputs and outputs needed for later evaluation once actual delivery dates are available.
+
+## Run lint and tests locally
+
+Install the production and development dependencies, then run lint and the test suite:
+
+```powershell
+python -m pip install -r requirements/requirements-prod.txt -r requirements/requirements-dev.txt
+pre-commit install
+ruff check app src tests
+ruff format --check app src tests
+pytest -q
+```
+
+For this assignment, commit the small Experiment 2 inference files (`final_logistic_model_experiment2.joblib`, `preprocessor_experiment2.joblib`, `final_threshold_experiment2.json`, and `feature_list_experiment2.txt`) with the repository so Docker builds, tests, and API inference work from a clean clone without an external DVC account. Their `.dvc` files remain available for DVC version metadata. The larger Task 2 datasets and feature matrices remain DVC-managed and are not needed to run Task 3 inference.
+
+To restore those larger Task 2 outputs on another machine, configure a DVC remote and run:
+
+```powershell
+dvc pull
+```
+
+GitHub Actions runs these lint and test commands for pushes and pull requests to `main` and `master`. On pushes to those branches, it also builds and publishes the Docker image to GitHub Container Registry.
+
+---
